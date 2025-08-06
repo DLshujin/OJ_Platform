@@ -1,0 +1,33 @@
+<div class="footer">
+  <div class="row"><div class="columns">
+    <div class="footer__extra-link clearfix">
+      <div class="footer__extra-left">
+        <ol class="clearfix">
+          <li class="footer__extra-link-item nojs--hide" data-dropdown-target="#menu-footer-lang">
+            <span><span class="icon icon-global"></span> Language <span class="icon icon-expand_less"></span></span>
+            <ol class="dropdown-target menu" id="menu-footer-lang">
+            {%- for k, v in model.setting.SETTINGS_BY_KEY['viewLang'].range -%}
+              <li class="menu__item"><a class="menu__link" href="{{ url('switch_language', lang=k) }}">{{ v }}</a></li>
+            {%- endfor -%}
+            </ol>
+          </li>
+          <li class="footer__extra-link-item">
+            {% if handler.session.legacy %}
+              <a href="/legacy">{{ _('Standard mode') }}</a>
+            {% else %}
+              <a href="/legacy?legacy=true">{{ _('Legacy mode') }}</a>
+            {% endif %}
+          </li>
+          <li class="footer__extra-link-item nojs--hide" data-dropdown-target="#menu-footer-theme">
+            <span><span class="icon icon-global"></span> {{ _('Theme') }} <span class="icon icon-expand_less"></span></span>
+            <ol class="dropdown-target menu" id="menu-footer-theme">
+              <li class="menu__item"><a class="menu__link" href="{{ url('set_theme', theme='light') }}">{{ _('Light') }}</a></li>
+              <li class="menu__item"><a class="menu__link" href="{{ url('set_theme', theme='dark') }}">{{ _('Dark') }}</a></li>
+            </ol>
+          </li>
+        </ol>
+      </div>
+
+    </div>
+  </div></div>
+</div>
