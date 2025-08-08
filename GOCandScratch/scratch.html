@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Scratch 在线编辑器</title>
+    <meta http-equiv="refresh" content="0;url=https://scratch.mit.edu/projects/editor/?tutorial=getStarted" />
+    <style>
+      html, body { height: 100%; margin: 0; }
+      #wrap { height: 100%; display: grid; grid-template-rows: auto 1fr; }
+      header { padding: 8px 12px; background: #0ea5e9; color: #fff; display:flex; align-items:center; gap:10px; }
+      header a.btn, header button.btn { color:#fff; text-decoration:none; padding:6px 10px; border:1px solid rgba(255,255,255,.4); border-radius:6px; background: rgba(255,255,255,.15); cursor:pointer; }
+      main { display:flex; align-items:center; justify-content:center; color:#334155; }
+      .tip { opacity: .9; }
+    </style>
+  </head>
+  <body>
+    <div id="wrap">
+      <header>
+        <strong>Scratch 在线编辑器</strong>
+        <span class="tip">正在自动跳转到官方编辑器；若未跳转，请点击按钮。</span>
+        <a id="openTab" class="btn" target="_blank" rel="noopener" href="https://scratch.mit.edu/projects/editor/?tutorial=getStarted">新标签打开</a>
+        <button id="reloadBtn" class="btn">重新加载</button>
+      </header>
+      <main>
+        <p>如果没有自动跳转，点击“重新加载”或“新标签打开”。</p>
+      </main>
+    </div>
+    <script src="./scratch.js"></script>
+  </body>
+  </html>
+
+

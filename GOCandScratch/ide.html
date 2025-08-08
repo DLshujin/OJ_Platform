@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>在线代码编辑器（Python / C++）</title>
+    <link rel="stylesheet" href="./ide.css" />
+    <!-- Ace Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.23.4/src-min-noconflict/ace.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.23.4/src-min-noconflict/ext-language_tools.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="tabs">
+        <button class="tab active" data-lang="python">Python</button>
+        <button class="tab" data-lang="cpp">C++</button>
+      </div>
+      <div class="actions">
+        <button id="runBtn" class="btn run">运行 (Ctrl+Enter)</button>
+        <button id="clearBtn" class="btn">清空输出</button>
+        <a class="btn" target="_blank" rel="noopener" href="https://scratch.mit.edu/projects/editor/?tutorial=getStarted">Scratch</a>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="editor-pane">
+        <div id="editor"></div>
+        <div class="stdin">
+          <label>标准输入（可选）</label>
+          <textarea id="stdin" placeholder="在此输入运行时的标准输入...\n例如：\n3 4\n"></textarea>
+        </div>
+      </section>
+      <section class="output-pane">
+        <div class="output-toolbar">
+          <span id="status">已就绪</span>
+        </div>
+        <pre id="output" class="output"></pre>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <small>
+        Python 由 Pyodide 在浏览器中执行；C++ 使用 Judge0 公共 API（需联网）。
+        参考：<a target="_blank" rel="noopener" href="https://scratch.mit.edu/projects/editor/?tutorial=getStarted">Scratch Editor</a>
+      </small>
+    </footer>
+
+    <!-- Pyodide (Python in WebAssembly) -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script src="./ide.js"></script>
+  </body>
+  </html>
+
+
