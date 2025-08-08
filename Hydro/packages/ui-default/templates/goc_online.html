@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoC在线编程</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { 
+    height: 100%; 
+    margin: 0; 
+    padding: 0; 
+    overflow: hidden;
+  }
+  .goc-container { 
+    height: 100vh; 
+    width: 100vw;
+    display: flex; 
+    flex-direction: column; 
+    background: #f5f5f5; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+  }
+  .goc-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .goc-title {
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .goc-badge {
+    background: rgba(255,255,255,0.2);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+  .goc-toolbar {
+    display: flex;
+    gap: 10px;
+  }
+  .goc-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+  .goc-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-1px);
+  }
+  .goc-btn.primary {
+    background: #10b981;
+  }
+  .goc-btn.primary:hover {
+    background: #059669;
+  }
+  .goc-iframe-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+  #gocIframe { 
+    width: 100%; 
+    height: 100%; 
+    border: none; 
+    display: block; 
+    margin: 0;
+    padding: 0;
+  }
+  .back-btn {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  .back-btn:hover {
+    background: rgba(255,255,255,0.25);
+    color: white;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="goc-container">
+  <div class="goc-header">
+    <div class="goc-title">
+      <span>🎨</span>
+      <span>GoC在线编程环境</span>
+      <span class="goc-badge">江涛老师独创</span>
+    </div>
+    <div class="goc-toolbar">
+      <a href="/" class="back-btn">← 返回首页</a>
+      <button id="initBtn" class="goc-btn" title="使用全新窗口编号重新加载，得到仅含 int main() 的空白模板">🔄 初始化</button>
+      <button id="openNewTab" class="goc-btn primary" title="在新窗口打开在线编程页">🚀 新窗口</button>
+    </div>
+  </div>
+  
+  <div class="goc-iframe-container">
+    <iframe
+      id="gocIframe"
+      title="GoC 在线编程"
+      src=""
+      referrerpolicy="no-referrer-when-downgrade"
+      loading="eager"
+    ></iframe>
+  </div>
+</div>
+
+<script>
+;(function () {
+  function buildUrlFromSearch() {
+    var base = 'http://47.99.149.106:10086/static/gocWebNet/gocWebNet.html';
+    var params = new URLSearchParams(window.location.search);
+    if (!params.has('submitBt')) params.set('submitBt', '0');
+    if (!params.has('insert')) params.set('insert', '0');
+    if (!params.has('ra')) params.set('ra', '60');
+    // 每次打开都是"本地窗口"：生成一个带时间戳的 winName，避免复用旧会话
+    params.set('winName', 'hydro_goc_' + Date.now());
+    return base + '?' + params.toString();
+  }
+
+  function buildBlankInitUrl() {
+    var base = 'http://47.99.149.106:10086/static/gocWebNet/gocWebNet.html';
+    // 使用一个新的随机窗口名，避免继承旧状态；保持按钮默认关闭
+    var params = new URLSearchParams({
+      submitBt: '0',
+      insert: '0',
+      ra: '60',
+      winName: 'hydro_init_' + Date.now()
+    });
+    return base + '?' + params.toString();
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var iframe = document.getElementById('gocIframe');
+    var url = buildUrlFromSearch();
+    iframe.src = url;
+    
+    // 监听加载完成后，触发一次尺寸"轻推"，促使内部布局计算
+    iframe.addEventListener('load', function () {
+      try {
+        // 尝试通过改变 iframe 的高度 1px 再恢复来触发重排
+        var h = iframe.style.height || window.getComputedStyle(iframe).height;
+        iframe.style.height = 'calc(100% - 1px)';
+        // 下一帧恢复
+        requestAnimationFrame(function () {
+          iframe.style.height = h || '100%';
+        });
+      } catch (e) {
+        // 忽略跨域导致的访问限制
+      }
+    });
+
+    // 窗口尺寸变化时也做一次轻推
+    window.addEventListener('resize', function () {
+      var h = iframe.style.height || window.getComputedStyle(iframe).height;
+      iframe.style.height = 'calc(100% - 1px)';
+      requestAnimationFrame(function () {
+        iframe.style.height = h || '100%';
+      });
+    });
+
+    // 初始化按钮：加载一个全新会话（仅含空白模板）
+    var initBtn = document.getElementById('initBtn');
+    if (initBtn) {
+      initBtn.addEventListener('click', function () {
+        var initUrl = buildBlankInitUrl();
+        iframe.src = initUrl;
+      });
+    }
+
+    // 新窗口按钮
+    var openNewTab = document.getElementById('openNewTab');
+    if (openNewTab) {
+      openNewTab.addEventListener('click', function () {
+        // 复制当前页面到新窗口，而不是跳转到外部GoC网站
+        window.open(window.location.href, '_blank', 'noopener,noreferrer');
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

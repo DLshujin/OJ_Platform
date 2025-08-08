@@ -1,0 +1,5 @@
+type: remote_judge
+subType: ybtbas
+target: ybtbas/P220
+time: 1000ms
+memory: 64MB

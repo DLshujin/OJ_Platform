@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scratch图形化编程</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { 
+    height: 100%; 
+    margin: 0; 
+    padding: 0; 
+    overflow: hidden;
+  }
+  .scratch-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+  }
+  .scratch-header {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+  }
+  .scratch-title {
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .scratch-badge {
+    background: rgba(255,255,255,0.2);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+  .scratch-toolbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .scratch-btn {
+    padding: 8px 16px;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .scratch-btn:hover {
+    background: rgba(255,255,255,0.25);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+  .scratch-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .scratch-logo {
+    font-size: 80px;
+    animation: bounce 2s infinite;
+  }
+  .scratch-info {
+    max-width: 600px;
+  }
+  .scratch-info h2 {
+    font-size: 32px;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+  .scratch-info p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    opacity: 0.9;
+  }
+  .scratch-launch {
+    background: #ff4757;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 25px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255,71,87,0.4);
+  }
+  .scratch-launch:hover {
+    background: #ff3838;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,71,87,0.6);
+  }
+  .scratch-tips {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-10px);
+    }
+    60% {
+      transform: translateY(-5px);
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="scratch-container">
+  <div class="scratch-header">
+    <div class="scratch-title">
+      <span>🧩</span>
+      <span>Scratch图形化编程</span>
+      <span class="scratch-badge">MIT开发</span>
+    </div>
+    <div class="scratch-toolbar">
+      <a href="/" class="scratch-btn">← 返回首页</a>
+      <a id="openTab" class="scratch-btn" target="_blank" rel="noopener">🚀 新标签打开</a>
+      <button id="reloadBtn" class="scratch-btn">🔄 重新加载</button>
+    </div>
+  </div>
+  
+  <div class="scratch-content">
+    <div class="scratch-logo">🐱</div>
+    <div class="scratch-info">
+      <h2>欢迎使用Scratch编程！</h2>
+      <p>
+        Scratch是由MIT开发的图形化编程语言，通过拖拽积木块的方式来创建动画、游戏和交互式故事。
+        非常适合编程初学者和青少年学习编程思维。
+      </p>
+      <button id="launchBtn" class="scratch-launch">🎯 启动Scratch编辑器</button>
+      <div class="scratch-tips">
+        <strong>💡 小提示：</strong>
+        由于Scratch官方网站的安全策略，编辑器将在新标签页中打开。
+        如果没有自动跳转，请点击上方的"新标签打开"按钮。
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var SCRATCH_URL = 'https://scratch.mit.edu/projects/editor/?tutorial=getStarted';
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // 设置按钮链接
+    document.getElementById('openTab').href = SCRATCH_URL;
+    
+    // 启动按钮点击事件
+    document.getElementById('launchBtn').addEventListener('click', function () {
+      window.open(SCRATCH_URL, '_blank', 'noopener,noreferrer');
+    });
+    
+    // 重新加载按钮点击事件
+    document.getElementById('reloadBtn').addEventListener('click', function () {
+      window.open(SCRATCH_URL, '_blank', 'noopener,noreferrer');
+    });
+    
+    // 页面加载后自动打开Scratch（可选）
+    // window.open(SCRATCH_URL, '_blank', 'noopener,noreferrer');
+  });
+})();
+</script>
+</body>
+</html>

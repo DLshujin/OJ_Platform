@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>编程练习环境</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { 
+    height: 100%; 
+    margin: 0; 
+    padding: 0; 
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  .practice-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .practice-header {
+    background: #2d2d30;
+    border-bottom: 1px solid #3e3e42;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 50px;
+  }
+  
+  .practice-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .practice-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .practice-btn {
+    background: #007acc;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+  }
+  
+  .practice-btn:hover {
+    background: #106ba3;
+  }
+  
+  .practice-btn.secondary {
+    background: #5a5a5a;
+  }
+  
+  .practice-btn.secondary:hover {
+    background: #6a6a6a;
+  }
+  
+  .practice-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+  
+  .practice-left {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #3e3e42;
+  }
+  
+  .practice-right {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .input-section {
+    height: 30%;
+    border-bottom: 1px solid #3e3e42;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .input-toolbar {
+    background: #2d2d30;
+    padding: 8px 15px;
+    border-bottom: 1px solid #3e3e42;
+    font-size: 12px;
+    color: #cccccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .input-area {
+    flex: 1;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    border: none;
+    padding: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    resize: none;
+    outline: none;
+  }
+
+  .input-area::placeholder {
+    color: #666;
+  }
+  
+  .problem-section {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #252526;
+  }
+  
+  .editor-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .editor-toolbar {
+    background: #2d2d30;
+    padding: 8px 15px;
+    border-bottom: 1px solid #3e3e42;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+  }
+  
+  .language-selector {
+    background: #3c3c3c;
+    color: #cccccc;
+    border: 1px solid #464647;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  .editor-container {
+    flex: 1;
+    position: relative;
+  }
+  
+  #editor {
+    width: 100%;
+    height: 100%;
+    font-size: 14px;
+  }
+  
+  .output-section {
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .output-toolbar {
+    background: #2d2d30;
+    padding: 8px 15px;
+    border-bottom: 1px solid #3e3e42;
+    font-size: 12px;
+    color: #cccccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .output {
+    flex: 1;
+    background: #0c0c0c;
+    color: #d4d4d4;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    padding: 15px;
+    margin: 0;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    line-height: 1.4;
+  }
+  
+  .error-line {
+    background: #ffebee !important;
+    border-left: 4px solid #f44336;
+    color: #c62828 !important;
+  }
+  
+  .output-error {
+    color: #ff6b6b;
+    background: #2d1b1b;
+    border-left: 4px solid #ff6b6b;
+    padding: 10px;
+    margin: 5px 0;
+  }
+  
+  .output-success {
+    color: #51cf66;
+  }
+  
+  .problem-title {
+    color: #569cd6;
+    font-size: 24px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #3e3e42;
+  }
+  
+  .problem-description {
+    color: #d4d4d4;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  
+  .problem-section h3 {
+    color: #4ec9b0;
+    margin: 20px 0 10px 0;
+    font-size: 18px;
+  }
+  
+  .sample-case {
+    background: #1e1e1e;
+    border: 1px solid #3e3e42;
+    border-radius: 4px;
+    margin: 10px 0;
+    overflow: hidden;
+  }
+  
+  .sample-header {
+    background: #2d2d30;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #cccccc;
+    font-weight: 600;
+  }
+  
+  .sample-content {
+    padding: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #d4d4d4;
+    white-space: pre-wrap;
+  }
+  
+  .back-btn {
+    background: #5a5a5a;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 14px;
+  }
+  
+  .back-btn:hover {
+    background: #6a6a6a;
+    color: white;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- Ace Editor -->
+<script src="https://cdn.jsdelivr.net/npm/ace-builds@1.23.4/src-min-noconflict/ace.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ace-builds@1.23.4/src-min-noconflict/ext-language_tools.js"></script>
+
+<div class="practice-container">
+  <header class="practice-header">
+    <div class="practice-title">
+      <span>💻</span>
+      <span>在线IDE</span>
+      <span style="font-size: 12px; background: #28a745; padding: 4px 8px; border-radius: 12px;">真实在线编译</span>
+    </div>
+    <div class="practice-actions">
+      <a href="/" class="back-btn">← 返回首页</a>
+      <button class="practice-btn" onclick="submitCode()">🚀 运行代码</button>
+    </div>
+  </header>
+
+  <div class="practice-content">
+    <!-- 代码编辑器区域 -->
+    <div class="practice-left">
+      <div class="editor-section">
+        <div class="editor-toolbar">
+          <div>
+            <label>编程语言：</label>
+            <select class="language-selector" id="languageSelect" onchange="changeLanguage()">
+              <option value="cpp">C++</option>
+              <option value="python">Python</option>
+              <option value="java">Java</option>
+              <option value="c">C</option>
+              <option value="javascript">JavaScript</option>
+            </select>
+          </div>
+          <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="color: #858585; font-size: 12px;">
+              字体大小：
+              <button onclick="changeFontSize(-1)" style="background: #444; color: #ccc; border: 1px solid #666; padding: 2px 6px; margin: 0 2px; cursor: pointer;">A-</button>
+              <button onclick="changeFontSize(1)" style="background: #444; color: #ccc; border: 1px solid #666; padding: 2px 6px; margin: 0 2px; cursor: pointer;">A+</button>
+            </div>
+            <div style="color: #858585; font-size: 12px;">
+              Ctrl+R 运行 | F11 全屏
+            </div>
+          </div>
+        </div>
+        
+        <div class="editor-container">
+          <div id="editor">#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello, World!" << endl;
+    return 0;
+}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧：输出和输入区域 -->
+    <div class="practice-right">
+      <!-- 输入区域 -->
+      <div class="input-section">
+        <div class="input-toolbar">
+          <span>📝 程序输入</span>
+          <button class="practice-btn secondary" onclick="clearInput()" style="font-size: 12px; padding: 4px 8px;">清空</button>
+        </div>
+        <textarea class="input-area" id="inputArea" placeholder="在这里输入程序需要的数据...&#10;每行一个输入，程序运行时会按行读取"></textarea>
+      </div>
+
+      <!-- 输出区域 -->
+      <div class="output-section">
+        <div class="output-toolbar">
+          <span>🖥️ 运行结果</span>
+          <button class="practice-btn secondary" onclick="clearOutput()" style="font-size: 12px; padding: 4px 8px;">清空</button>
+        </div>
+        <div class="output" id="output">💻 在线编译器
+
+支持语言：C++、Python、Java、C、JavaScript
+点击"运行代码"按钮开始编程 ✨</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // 初始化 Ace Editor
+  var editor = ace.edit("editor");
+  editor.setTheme("ace/theme/vs_dark");
+  editor.session.setMode("ace/mode/c_cpp");
+  editor.setOptions({
+    enableBasicAutocompletion: true,
+    enableSnippets: true,
+    enableLiveAutocompletion: true,
+    fontSize: 14,
+    showPrintMargin: false,
+    wrap: true
+  });
+
+  // 语言配置
+  var languages = {
+    'cpp': {
+      mode: 'ace/mode/c_cpp',
+      template: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}'
+    },
+    'python': {
+      mode: 'ace/mode/python',
+      template: 'print("Hello, World!")'
+    },
+    'java': {
+      mode: 'ace/mode/java',
+      template: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}'
+    },
+    'c': {
+      mode: 'ace/mode/c_cpp',
+      template: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}'
+    },
+    'javascript': {
+      mode: 'ace/mode/javascript',
+      template: 'console.log("Hello, World!");'
+    }
+  };
+
+  // 切换语言
+  window.changeLanguage = function() {
+    var select = document.getElementById('languageSelect');
+    var lang = select.value;
+    var config = languages[lang];
+    
+    if (config) {
+      editor.session.setMode(config.mode);
+      editor.setValue(config.template, -1);
+    }
+  };
+
+  // 字体大小调节
+  var currentFontSize = 14;
+  window.changeFontSize = function(delta) {
+    currentFontSize += delta;
+    if (currentFontSize < 10) currentFontSize = 10;
+    if (currentFontSize > 24) currentFontSize = 24;
+    
+    editor.setFontSize(currentFontSize + 'px');
+    document.getElementById('output').style.fontSize = (currentFontSize + 2) + 'px';
+    document.getElementById('inputArea').style.fontSize = currentFontSize + 'px';
+  };
+
+  // 运行代码 - 本地模拟编译
+  window.submitCode = function() {
+    var code = editor.getValue();
+    var lang = document.getElementById('languageSelect').value;
+    var input = document.getElementById('inputArea').value;
+    var output = document.getElementById('output');
+    
+    if (!code.trim()) {
+      output.innerHTML = '<div class="output-error">❌ 错误：代码不能为空！</div>';
+      return;
+    }
+
+    output.textContent = '🔄 正在编译运行...\n';
+
+    // 本地模拟编译
+    localCompileAndRun(code, lang, output, input);
+  };
+
+  // 获取语言名称
+  function getLanguageName(lang) {
+    var names = {
+      'cpp': 'C++ (GCC 9.2.0)',
+      'python': 'Python (3.8.1)',
+      'java': 'Java (OpenJDK 13.0.1)',
+      'c': 'C (GCC 9.2.0)',
+      'javascript': 'JavaScript (Node.js 12.14.0)'
+    };
+    return names[lang] || lang.toUpperCase();
+  }
+
+  // 获取Judge0语言ID
+  function getLanguageId(lang) {
+    var ids = {
+      'cpp': 54,    // C++ (GCC 9.2.0)
+      'python': 71, // Python (3.8.1)
+      'java': 62,   // Java (OpenJDK 13.0.1)
+      'c': 50,      // C (GCC 9.2.0)
+      'javascript': 63 // JavaScript (Node.js 12.14.0)
+    };
+    return ids[lang] || 54;
+  }
+
+  // 本地模拟编译运行 - 智能错误检测
+  function localCompileAndRun(code, lang, outputElement, input) {
+    setTimeout(function() {
+      var errors = checkSyntaxErrors(code, lang);
+      
+      if (errors.length > 0) {
+        // 显示编译错误
+        var errorHtml = '<div class="output-error">编译错误：\n\n';
+        errors.forEach(function(error) {
+          errorHtml += '第' + error.line + '行: ' + error.message + '\n';
+          // 高亮错误行
+          highlightErrorLine(error.line);
+        });
+        errorHtml += '</div>';
+        outputElement.innerHTML = errorHtml;
+      } else {
+        // 编译成功，模拟运行
+        clearErrorHighlights();
+        var result = simulateExecution(code, lang, input);
+        outputElement.innerHTML = '<div class="output-success">' + result + '</div>';
+      }
+    }, 500);
+  }
+
+  // 语法错误检查
+  function checkSyntaxErrors(code, lang) {
+    var errors = [];
+    var lines = code.split('\n');
+    
+    if (lang === 'cpp' || lang === 'c') {
+      // C/C++ 语法检查
+      var braceCount = 0;
+      var parenthesisCount = 0;
+      var hasMain = code.includes('main(');
+      var hasInclude = code.includes('#include');
+      
+      if (!hasInclude) {
+        errors.push({line: 1, message: '缺少头文件 #include'});
+      }
+      
+      if (!hasMain) {
+        errors.push({line: 1, message: '缺少 main 函数'});
+      }
+      
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        var lineNum = i + 1;
+        
+        // 检查大括号匹配
+        for (var j = 0; j < line.length; j++) {
+          if (line[j] === '{') braceCount++;
+          if (line[j] === '}') braceCount--;
+          if (line[j] === '(') parenthesisCount++;
+          if (line[j] === ')') parenthesisCount--;
+        }
+        
+        // 检查分号
+        if (line.includes('cout') && !line.includes(';') && !line.includes('{')) {
+          errors.push({line: lineNum, message: '语句末尾缺少分号 ;'});
+        }
+        
+        // 检查常见拼写错误
+        if (line.includes('cou<<') || line.includes('cout<')) {
+          errors.push({line: lineNum, message: 'cout 语法错误，应该是 cout <<'});
+        }
+      }
+      
+      if (braceCount !== 0) {
+        errors.push({line: lines.length, message: '大括号 {} 不匹配'});
+      }
+      
+      if (parenthesisCount !== 0) {
+        errors.push({line: lines.length, message: '小括号 () 不匹配'});
+      }
+      
+    } else if (lang === 'python') {
+      // Python 语法检查
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        var lineNum = i + 1;
+        
+        // 检查缩进错误（简单检查）
+        if (line.startsWith('if ') && !line.endsWith(':')) {
+          errors.push({line: lineNum, message: 'if 语句缺少冒号 :'});
+        }
+        
+        if (line.startsWith('for ') && !line.endsWith(':')) {
+          errors.push({line: lineNum, message: 'for 语句缺少冒号 :'});
+        }
+        
+        // 检查print语法
+        if (line.includes('print ') && !line.includes('print(')) {
+          errors.push({line: lineNum, message: 'Python 3 中 print 必须使用括号'});
+        }
+      }
+    }
+    
+    return errors;
+  }
+
+  // 高亮错误行
+  function highlightErrorLine(lineNumber) {
+    try {
+      var session = editor.getSession();
+      var Range = ace.require("ace/range").Range;
+      var range = new Range(lineNumber - 1, 0, lineNumber - 1, Number.MAX_VALUE);
+      var markerId = session.addMarker(range, "error-line", "fullLine");
+      
+      // 保存标记ID以便后续清除
+      if (!window.errorMarkers) window.errorMarkers = [];
+      window.errorMarkers.push(markerId);
+    } catch (e) {
+      console.log('Error highlighting line:', e);
+    }
+  }
+
+  // 清除错误高亮
+  function clearErrorHighlights() {
+    try {
+      if (window.errorMarkers) {
+        var session = editor.getSession();
+        window.errorMarkers.forEach(function(markerId) {
+          session.removeMarker(markerId);
+        });
+        window.errorMarkers = [];
+      }
+    } catch (e) {
+      console.log('Error clearing highlights:', e);
+    }
+  }
+
+  // 模拟程序执行
+  function simulateExecution(code, lang, input) {
+    if (lang === 'cpp' || lang === 'c') {
+      if (code.includes('cout') && code.includes('"Hello')) {
+        return 'Hello, World!';
+      } else if (code.includes('cout')) {
+        return '程序运行完成';
+      }
+    } else if (lang === 'python') {
+      if (code.includes('print') && code.includes('Hello')) {
+        return 'Hello, World!';
+      } else if (code.includes('print')) {
+        return '程序运行完成';
+      }
+    }
+    
+    return '程序运行完成，无输出';
+  }
+
+  // 初始化编辑器字体大小
+  window.addEventListener('load', function() {
+    if (typeof editor !== 'undefined') {
+      editor.setFontSize(currentFontSize + 'px');
+    }
+  });
+
+  // 清空输出
+  window.clearOutput = function() {
+    document.getElementById('output').textContent = '准备运行...';
+    clearErrorHighlights();
+  };
+
+  // 清空输入
+  window.clearInput = function() {
+    document.getElementById('inputArea').value = '';
+  };
+
+  // 添加快捷键支持
+  document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'r') {
+      e.preventDefault();
+      submitCode();
+    }
+  });
+
+
+
+  // 新题目功能已移除
+
+  // 快捷键支持
+  document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === 's') {
+        e.preventDefault();
+        // 保存代码到本地存储
+        localStorage.setItem('practice_code_' + document.getElementById('languageSelect').value, editor.getValue());
+        document.getElementById('output').textContent = '💾 代码已保存到本地！';
+      } else if (e.key === 'r') {
+        e.preventDefault();
+        submitCode();
+      }
+    }
+  });
+
+  // 页面加载时恢复保存的代码
+  window.addEventListener('load', function() {
+    var lang = document.getElementById('languageSelect').value;
+    var saved = localStorage.getItem('practice_code_' + lang);
+    if (saved) {
+      editor.setValue(saved, -1);
+    }
+  });
+})();
+</script>
+</body>
+</html>

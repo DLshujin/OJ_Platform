@@ -1,0 +1,8 @@
+hosts:
+  localhost:
+    type: hydro
+    server_url: http://127.0.0.1:8888
+    uname: judge
+    password: judge123
+    detail: full
+sandbox_host: http://127.0.0.1:5050

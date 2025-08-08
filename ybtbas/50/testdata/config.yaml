@@ -1,0 +1,5 @@
+type: remote_judge
+subType: ybtbas
+target: ybtbas/P50
+time: 1000ms
+memory: 128MB
